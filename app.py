@@ -1,3 +1,5 @@
+import os
+os.environ["NUMBA_DISABLE_JIT"] = "1"
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -35,7 +37,7 @@ def predict():
     file.save(filepath)
 
     # Feature Extraction
-    audio, sr = librosa.load(filepath, sr=16000)
+    audio, sr = librosa.load(filepath, sr=16000, duration=5)
     plt.figure(figsize=(10,3))
     plt.plot(audio)
     plt.title("Audio Waveform")
