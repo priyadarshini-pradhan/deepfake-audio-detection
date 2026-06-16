@@ -41,13 +41,18 @@ def predict():
     file.save(filepath)
 
     # Feature Extraction
-    audio, sr = librosa.load(
-    filepath,
-    sr=16000,
-    duration=5,
-    mono=True,
-    res_type="kaiser_fast"
-)
+    audio, sr = sf.read(filepath)
+
+    audio, sr = sf.read(filepath)
+
+    if len(audio.shape) > 1:
+        audio = np.mean(audio, axis=1)
+
+    audio = audio.astype(np.float32)
+
+    if len(audio) > sr * 5:
+        audio = audio[:sr * 5]
+
     print("Audio loaded")
     print("Audio shape:", audio.shape)
     print("Sample rate:", sr)
