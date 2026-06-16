@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, url_for
 from werkzeug.utils import secure_filename
 import os
 import librosa
+import soundfile as sf
 import numpy as np
 import numba
 print("LIBROSA VERSION:", librosa.__version__)
@@ -40,8 +41,16 @@ def predict():
     file.save(filepath)
 
     # Feature Extraction
-    audio, sr = librosa.load(filepath, sr=16000, duration=5)
+    audio, sr = librosa.load(
+    filepath,
+    sr=16000,
+    duration=5,
+    mono=True,
+    res_type="kaiser_fast"
+)
     print("Audio loaded")
+    print("Audio shape:", audio.shape)
+    print("Sample rate:", sr)
     plt.figure(figsize=(10,3))
     plt.plot(audio)
     plt.title("Audio Waveform")
@@ -53,8 +62,12 @@ def predict():
     plt.savefig(waveform_path)
     plt.close()
 
-    mfcc = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
-    print("MFCC extracted")
+    try:
+        mfcc = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
+        print("MFCC extracted")
+    except Exception as e:
+        print("MFCC ERROR:", str(e))
+        raise
     mfcc = np.mean(mfcc.T, axis=0)
     mfcc = mfcc.reshape(1, 40, 1)
 
