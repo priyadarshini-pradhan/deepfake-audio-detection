@@ -3,3 +3,4 @@ Features/
 Results/
 __pycache__/
 *.pyc
+venv/
